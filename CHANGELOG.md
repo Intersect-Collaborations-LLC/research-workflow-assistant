@@ -17,6 +17,31 @@ A machine-readable mirror of this log is maintained in [versions.yaml](versions.
 
 ### Removed
 
+## [2026.06.30] — 2026-06-30
+
+Google Workspace MCP server, OpenRouter model guidance with pricing table, author name normalization, and bibliography sync improvements.
+
+### Added
+
+- **Google Workspace MCP server**: New `google-workspace` server providing OAuth-secured Google Drive and Google Docs integration, including file listing/import/upload and a comment-to-proposal review-workflow round-trip with deterministic line anchors (11 tools total).
+- **Google Workspace guide**: New `docs/google-workspace-guide.md` covering OAuth setup, the review-workflow round-trip, full tool reference, configuration, and troubleshooting.
+- **OpenRouter model guidance**: Expanded the README "Model note" callout to document OpenRouter as a routing service that connects GitHub Copilot to models from many providers. Added a pricing table of open-source/open-weight models (GLM 5.2, DeepSeek V4 Pro/Flash, MiniMax M3, Qwen3.7 Max, Kimi K2.6) alongside frontier model pricing for comparison, sourced from the OpenRouter agentic-sorted catalog.
+- **Author name normalization**: Implemented author name normalization in the shared result store with corresponding tests.
+
+### Changed
+
+- **Bibliography sync refactor**: Simplified the dictionary comprehension in `sync_project_bibliography` for cleaner code.
+- **Documentation cross-references**: Added links from `docs/api-setup-guide.md` and `README.md` to the new Google Workspace guide.
+- **Infrastructure updates**: Updated workflows, setup agent, copilot-instructions, tasks, and config files to register and support the new google-workspace server.
+
+### Fixed
+
+- (none)
+
+### Removed
+
+- (none)
+
 ## [2026.04.06] — 2026-04-06
 
 Verification coordinator agent, reusable verification templates, and workflow integration for end-to-end reproducibility checks.

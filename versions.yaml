@@ -64,3 +64,20 @@ releases:
       fixed: []
       removed: []
       security: []
+
+  - version: "2026.06.30"
+    date: "2026-06-30"
+    summary: "Google Workspace MCP server, OpenRouter model guidance with pricing table, author name normalization, and bibliography sync improvements"
+    changes:
+      added:
+        - "Google Workspace MCP server: OAuth-secured Google Drive and Google Docs integration with comment-to-proposal review-workflow round-trip (11 tools)"
+        - "docs/google-workspace-guide.md: dedicated guide covering OAuth setup, review-workflow round-trip, tool reference, configuration, and troubleshooting"
+        - "OpenRouter model guidance in README: routing service clarification and pricing table of open-source/open-weight models (GLM 5.2, DeepSeek V4 Pro/Flash, MiniMax M3, Qwen3.7 Max, Kimi K2.6) alongside frontier model pricing"
+        - "Author name normalization in shared result store with tests"
+      changed:
+        - "Bibliography sync refactor: simplified dictionary comprehension in sync_project_bibliography"
+        - "Documentation cross-references: api-setup-guide and README now link to the Google Workspace guide"
+        - "Infrastructure updates: workflows, setup agent, copilot-instructions, tasks, and config files updated to register and support the google-workspace server"
+      fixed: []
+      removed: []
+      security: []

@@ -4,7 +4,7 @@ build-backend = "hatchling.build"
 
 [project]
 name = "research-workflow-assistant"
-version = "2026.04.06"
+version = "2026.06.30"
 description = "AI-powered research workflow assistant with MCP servers for academic database access, ICMJE-compliant"
 readme = "README.md"
 license = {file = "LICENSE"}
