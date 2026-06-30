@@ -176,6 +176,7 @@ When tracking project progress or generating briefs:
 - **project-tracker**: Track project phases, milestones, tasks, decisions, meetings
 - **chat-exporter**: Export Copilot Chat sessions to QMD files for reproducibility audit trails
 - **bibliography-manager**: Local bibliography management for non-Zotero workflows (import/export BibTeX/RIS, notes, annotations, and CSL tools)
+- **google-workspace-server**: Google Drive import/export and Google Docs comment round-tripping with OAuth user login and proposal generation
 
 ### Rate Limiting
 Respect API rate limits for all external services:
@@ -186,6 +187,7 @@ Respect API rate limits for all external services:
 - CrossRef: 50 req/sec (polite pool with email)
 - Zotero: follow Zotero API rate limit headers
 - Zotero Local: no external API; be mindful of PDF processing time for large libraries (search is bounded by configurable limits)
+- Google Workspace: OAuth + quota-based Google API limits (Drive/Docs)
 
 ### Error Handling
 - If an API call fails, report the error clearly and suggest alternatives
@@ -367,7 +369,7 @@ The repository scaffold is complete. All files listed below are implemented and 
 - **8 MCP servers** (Python, using `mcp` SDK + `httpx`): PubMed, OpenAlex, Semantic Scholar, Europe PMC, CrossRef, Zotero, PRISMA Tracker, Project Tracker
 - **1 local MCP server** (Python, using `mcp` SDK + `pymupdf`): Zotero Local (PDF text/annotation extraction, keyword search, Better BibTeX integration)
 - **1 bibliography MCP server** (Python, using `mcp` SDK): Bibliography Manager (local reference management for non-Zotero users — import BibTeX/RIS, link PDFs, notes, annotations, export for Quarto)
-- **1 utility MCP server** (Python, using `mcp` SDK): Chat Exporter (export Copilot Chat sessions to QMD for reproducibility)
+- **2 utility MCP servers** (Python, using `mcp` SDK): Chat Exporter (export Copilot Chat sessions to QMD for reproducibility), Google Workspace Server (Drive/Docs OAuth integration and comment sync)
 - **6 custom Copilot agents** (`.agent.md`): systematic-reviewer, data-analyst, academic-writer, research-planner, project-manager, critical-reviewer
 - **2 operational agents** (`.agent.md`): research-orchestrator, developer
 - **1 setup agent** (`.agent.md`): setup — guided first-time configuration
@@ -384,7 +386,7 @@ When the developer opens this project for the first time, guide them through the
 1. **Set up Python environment and install MCP servers**
    - Create a virtual environment: `python -m venv .venv`
    - Activate it: `.venv\Scripts\activate` (Windows) or `source .venv/bin/activate` (macOS/Linux)
-   - Install all servers: `pip install -e mcp-servers/_shared -e mcp-servers/pubmed-server -e mcp-servers/openalex-server -e mcp-servers/semantic-scholar-server -e mcp-servers/europe-pmc-server -e mcp-servers/crossref-server -e mcp-servers/zotero-server -e mcp-servers/zotero-local-server -e mcp-servers/prisma-tracker -e mcp-servers/project-tracker -e mcp-servers/chat-exporter -e mcp-servers/bibliography-manager`
+   - Install all servers: `pip install -e mcp-servers/_shared -e mcp-servers/pubmed-server -e mcp-servers/openalex-server -e mcp-servers/semantic-scholar-server -e mcp-servers/europe-pmc-server -e mcp-servers/crossref-server -e mcp-servers/zotero-server -e mcp-servers/zotero-local-server -e mcp-servers/prisma-tracker -e mcp-servers/project-tracker -e mcp-servers/chat-exporter -e mcp-servers/bibliography-manager -e mcp-servers/google-workspace-server`
 
 2. **Configure API keys**
    - Copy `.env.example` to `.env`
@@ -394,7 +396,7 @@ When the developer opens this project for the first time, guide them through the
 
 3. **Verify MCP servers start correctly**
    - Open VS Code Command Palette > "MCP: List Servers"
-   - All 11 servers should show as started. If not, click Start (▶) or run "MCP: Restart Servers"
+   - All 12 servers should show as started. If not, click Start (▶) or run "MCP: Restart Servers"
    - The `command` in `.vscode/mcp.json` must point to the **venv Python** (`${workspaceFolder}/.venv/Scripts/python` on Windows, `${workspaceFolder}/.venv/bin/python` on macOS/Linux). If it says just `python`, update it.
    - After starting or restarting servers, open a **new** Copilot Chat session — existing sessions may not pick up newly started servers
    - Test individual servers: `python -m pubmed_server` (with venv active)

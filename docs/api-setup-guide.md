@@ -12,7 +12,7 @@ If you are setting up RWA for the first time, configure these in this order:
 | 2 | `NCBI_API_KEY` | Improves PubMed throughput (10 req/sec vs 3 req/sec) | 2 min |
 | 3 | `PROJECTS_ROOT` | Ensures project tracking targets the correct folder | 1 min |
 | 4 | `ZOTERO_API_KEY`, `ZOTERO_USER_ID` | Needed for Zotero integration features | 3 min |
-| Optional | `S2_API_KEY`, `CROSSREF_EMAIL`, `ZOTERO_DATA_DIR` | Nice-to-have for specific workflows | 1-5 min |
+| Optional | `S2_API_KEY`, `CROSSREF_EMAIL`, `ZOTERO_DATA_DIR`, `GOOGLE_OAUTH_CLIENT_ID`, `GOOGLE_OAUTH_CLIENT_SECRET` | Nice-to-have for specific workflows | 1-10 min |
 
 Recommended default:
 
@@ -272,6 +272,58 @@ If you use [Better BibTeX](https://retorque.re/zotero-better-bibtex/) for citati
 
 ---
 
+## Google Workspace (Drive and Docs)
+
+**Key type:** OAuth client ID + client secret (Desktop app)
+**Required:** No (required only for Google Drive/Docs integration)
+
+The `google-workspace` MCP server enables:
+
+- Google Drive file listing, upload, and import to local projects
+- Exporting local review files to Google Docs with deterministic anchor tokens
+- Pulling Google Docs comments and replies back into RWA project artifacts
+- Building local comment-to-proposal files for human review before edits
+
+### How to create OAuth credentials
+
+1. Open [Google Cloud Console](https://console.cloud.google.com/)
+2. Create/select a project
+3. Enable **Google Drive API** and **Google Docs API**
+4. Go to **APIs & Services → Credentials**
+5. Create **OAuth client ID** with application type **Desktop app**
+6. Copy the client ID and client secret
+7. Add the redirect URI you plan to use (default in RWA: `http://localhost:8765/`)
+
+### Configuration
+
+```ini
+GOOGLE_OAUTH_CLIENT_ID=your_google_client_id
+GOOGLE_OAUTH_CLIENT_SECRET=your_google_client_secret
+GOOGLE_OAUTH_REDIRECT_URI=http://localhost:8765/
+# Optional
+# GOOGLE_OAUTH_SCOPES=https://www.googleapis.com/auth/drive,https://www.googleapis.com/auth/documents.readonly
+GOOGLE_WORKSPACE_TOKEN_PATH=./secrets/google-workspace-token.json
+```
+
+### Scope defaults
+
+By default, RWA requests:
+
+- `https://www.googleapis.com/auth/drive`
+- `https://www.googleapis.com/auth/documents.readonly`
+
+You can override scopes with `GOOGLE_OAUTH_SCOPES`.
+
+### Documentation
+
+- [Google Drive API](https://developers.google.com/drive/api/guides/about-sdk)
+- [Google Docs API](https://developers.google.com/workspace/docs/api)
+- [Google OAuth for installed apps](https://developers.google.com/identity/protocols/oauth2/native-app)
+
+> **See also:** [google-workspace-guide.md](google-workspace-guide.md) for the full OAuth setup walkthrough, the Google Docs review-workflow round-trip, the complete tool reference, and troubleshooting.
+
+---
+
 ## Summary Table
 
 | Service | Auth Required | Key Type | Free Tier | Rate Limit |
@@ -283,6 +335,7 @@ If you use [Better BibTeX](https://retorque.re/zotero-better-bibtex/) for citati
 | CrossRef | No | Email (polite pool) | Yes (unlimited) | Polite pool preferred |
 | Zotero | Yes | API Key + User ID | Yes (300MB storage) | Fair use |
 | Zotero Local | No | File path | Yes (local only) | Disk I/O bound |
+| Google Workspace | Yes (for integration) | OAuth client ID + secret | Yes | Quota-based |
 
 ## Environment File Template
 
@@ -307,6 +360,14 @@ ZOTERO_USER_ID=
 
 # Zotero Local (optional — for PDF text/annotations)
 ZOTERO_DATA_DIR=
+
+# Google Workspace OAuth (optional — for Drive/Docs integration)
+GOOGLE_OAUTH_CLIENT_ID=
+GOOGLE_OAUTH_CLIENT_SECRET=
+GOOGLE_OAUTH_REDIRECT_URI=http://localhost:8765/
+# Optional comma-separated scope override
+# GOOGLE_OAUTH_SCOPES=https://www.googleapis.com/auth/drive,https://www.googleapis.com/auth/documents.readonly
+GOOGLE_WORKSPACE_TOKEN_PATH=./secrets/google-workspace-token.json
 
 # Tracking directories (optional, defaults to ./review-tracking and ./project-tracking)
 PRISMA_PROJECT_DIR=

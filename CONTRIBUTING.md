@@ -68,7 +68,8 @@ This project follows the [Contributor Covenant v2.1](CODE_OF_CONDUCT.md). By par
      -e mcp-servers/prisma-tracker \
      -e mcp-servers/project-tracker \
      -e mcp-servers/chat-exporter \
-     -e mcp-servers/bibliography-manager
+       -e mcp-servers/bibliography-manager \
+       -e mcp-servers/google-workspace-server
    ```
 
 3. **Install dev dependencies**:

@@ -15,6 +15,7 @@ tools:
   - project-tracker
   - prisma-tracker
   - bibliography-manager
+   - google-workspace
 ---
 
 # RWA Setup Agent
@@ -82,11 +83,11 @@ Guide the user through creating a virtual environment and installing the MCP ser
    - macOS/Linux: `source .venv/bin/activate`
    - Confirm the prompt changes to show `(.venv)`
 
-3. **Install all 11 MCP servers**:
+3. **Install all 12 MCP servers**:
    ```
-   pip install -e mcp-servers/_shared -e mcp-servers/pubmed-server -e mcp-servers/openalex-server -e mcp-servers/semantic-scholar-server -e mcp-servers/europe-pmc-server -e mcp-servers/crossref-server -e mcp-servers/zotero-server -e mcp-servers/zotero-local-server -e mcp-servers/prisma-tracker -e mcp-servers/project-tracker -e mcp-servers/chat-exporter -e mcp-servers/bibliography-manager
+   pip install -e mcp-servers/_shared -e mcp-servers/pubmed-server -e mcp-servers/openalex-server -e mcp-servers/semantic-scholar-server -e mcp-servers/europe-pmc-server -e mcp-servers/crossref-server -e mcp-servers/zotero-server -e mcp-servers/zotero-local-server -e mcp-servers/prisma-tracker -e mcp-servers/project-tracker -e mcp-servers/chat-exporter -e mcp-servers/bibliography-manager -e mcp-servers/google-workspace-server
    ```
-   Note: `zotero-local-server` requires PyMuPDF for PDF processing. If you see build errors for this package, it is safe to skip it and install the other 10 servers first.
+   Note: `zotero-local-server` requires PyMuPDF for PDF processing. If you see build errors for this package, it is safe to skip it and install the other 11 servers first.
 
    > **VS Code task shortcut:** You can also run `Ctrl+Shift+P` → "Tasks: Run Task" → "Install All MCP Servers" instead of typing the command manually.
 
@@ -141,6 +142,16 @@ Present them in this order:
 - **Action**: User provides the path → set `ZOTERO_DATA_DIR` in `.env`. Or says "auto-detect" (leave blank). Or says "skip" (local features will not be available; the Web API server still works).
 - **Optional**: If the user has Better BibTeX installed, confirm: "Do you have Better BibTeX installed in Zotero?" → If yes, note that BBT features (stable citekeys, enhanced export) will be available when Zotero is running.
 
+### 3g. Google Workspace OAuth (Optional — for Drive and Docs integration)
+- **What**: Enables Google Drive import/export and Google Docs review comment round-trips.
+- **How**:
+   1. Open Google Cloud Console and create/select a project
+   2. Enable Google Drive API and Google Docs API
+   3. Create OAuth client credentials (Desktop app)
+   4. Copy client ID and client secret
+   5. Confirm the redirect URI (default `http://localhost:8765/`) is allowed
+- **Action**: User provides `GOOGLE_OAUTH_CLIENT_ID` and `GOOGLE_OAUTH_CLIENT_SECRET`, or says "skip".
+
 ### Writing the .env file
 
 After collecting all keys:
@@ -165,6 +176,7 @@ For each configured key, run a small test query using the corresponding MCP serv
 - **CrossRef** (if CROSSREF_EMAIL set): Search for works with query `"systematic review"` with `rows=1`.
 - **Zotero** (if ZOTERO_API_KEY set): List collections. If it returns without error, the key and user ID are valid.
 - **Zotero Local** (if ZOTERO_DATA_DIR set or auto-detected): Call `detect_zotero_storage`. Check that it reports `status: found` with a valid `data_dir`, `pdf_count`, and `zotero_version`. If BBT status check is desired, also call `bbt_status`.
+- **Google Workspace** (if GOOGLE_OAUTH_CLIENT_ID and GOOGLE_OAUTH_CLIENT_SECRET set): call `gws_auth_status`. If connected, optionally run `gws_drive_list_files` with `page_size=1`.
 
 ### Reporting results
 
@@ -178,6 +190,7 @@ Present a summary table:
 | Europe PMC | Pass / Fail / Skipped | |
 | CrossRef | Pass / Fail / Skipped | |
 | Zotero | Pass / Fail / Skipped | |
+| Google Workspace | Pass / Fail / Skipped | |
 
 For any failures, offer to re-enter the key and re-test.
 
@@ -185,15 +198,15 @@ For any failures, offer to re-enter the key and re-test.
 
 ## Stage 5 — MCP Server Verification
 
-All 11 MCP servers are configured as `stdio` type in `.vscode/mcp.json`. VS Code **auto-starts** them on demand when Copilot invokes a tool — there is no manual "start all" step required. This stage verifies they are configured correctly and responsive.
+All 12 MCP servers are configured as `stdio` type in `.vscode/mcp.json`. VS Code **auto-starts** them on demand when Copilot invokes a tool — there is no manual "start all" step required. This stage verifies they are configured correctly and responsive.
 
 Guide the user through the VS Code MCP server check:
 
 1. "Open the Command Palette: press `Ctrl+Shift+P` (Windows/Linux) or `Cmd+Shift+P` (macOS)"
 2. "Type `MCP: List Servers` and select it"
-3. "You should see all 11 servers listed: pubmed, openalex, semantic-scholar, europe-pmc, crossref, zotero, zotero-local, prisma-tracker, project-tracker, chat-exporter, bibliography-manager"
+3. "You should see all 12 servers listed: pubmed, openalex, semantic-scholar, europe-pmc, crossref, zotero, zotero-local, prisma-tracker, project-tracker, chat-exporter, bibliography-manager, google-workspace"
 4. "All servers should start automatically when needed. If any show errors, we'll troubleshoot now."
-5. Ask: "Do all 11 servers appear? Are any showing errors?"
+5. Ask: "Do all 12 servers appear? Are any showing errors?"
 
 > **Quick health check:** You can also run `Ctrl+Shift+P` → "Tasks: Run Task" → "Validate Research Assistant Setup" to run the automated validation script.
 

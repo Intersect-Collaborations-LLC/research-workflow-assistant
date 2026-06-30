@@ -43,7 +43,8 @@ jobs:
                       -e mcp-servers/prisma-tracker \
                       -e mcp-servers/project-tracker \
                       -e mcp-servers/chat-exporter \
-                      -e mcp-servers/bibliography-manager
+                      -e mcp-servers/bibliography-manager \
+                      -e mcp-servers/google-workspace-server
 
       - name: Install MCP servers (Windows)
         if: runner.os == 'Windows'
@@ -60,7 +61,8 @@ jobs:
                       -e mcp-servers/prisma-tracker `
                       -e mcp-servers/project-tracker `
                       -e mcp-servers/chat-exporter `
-                      -e mcp-servers/bibliography-manager
+                      -e mcp-servers/bibliography-manager `
+                      -e mcp-servers/google-workspace-server
 
       - name: Run validation script (Unix)
         if: runner.os != 'Windows'
@@ -90,14 +92,15 @@ jobs:
           import project_tracker
           import chat_exporter
           import bibliography_manager
-          print('All 11 servers importable')
+          import google_workspace_server
+          print('All 12 servers importable')
           "
 
       - name: Verify server imports (Windows)
         if: runner.os == 'Windows'
         run: |
           .venv\Scripts\activate
-          python -c "import pubmed_server; import openalex_server; import semantic_scholar_server; import europe_pmc_server; import crossref_server; import zotero_server; import zotero_local_server; import prisma_tracker; import project_tracker; import chat_exporter; import bibliography_manager; print('All 11 servers importable')"
+          python -c "import pubmed_server; import openalex_server; import semantic_scholar_server; import europe_pmc_server; import crossref_server; import zotero_server; import zotero_local_server; import prisma_tracker; import project_tracker; import chat_exporter; import bibliography_manager; import google_workspace_server; print('All 12 servers importable')"
 
   tests:
     runs-on: ubuntu-latest
@@ -117,12 +120,13 @@ jobs:
           source .venv/bin/activate
           pip install -e ".[dev]" \
                       -e mcp-servers/_shared \
-                      -e mcp-servers/zotero-server
+                      -e mcp-servers/zotero-server \
+                      -e mcp-servers/google-workspace-server
 
       - name: Run pytest
         run: |
           source .venv/bin/activate
-          pytest tests mcp-servers/zotero-server/tests
+          pytest tests mcp-servers/zotero-server/tests mcp-servers/google-workspace-server/tests
 
   lint:
     runs-on: ubuntu-latest

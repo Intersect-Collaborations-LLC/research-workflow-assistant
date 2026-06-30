@@ -1,0 +1,22 @@
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[project]
+name = "google-workspace-server"
+version = "0.1.0"
+description = "MCP server for Google Drive and Google Docs review workflows"
+requires-python = ">=3.11"
+dependencies = [
+    "mcp>=1.0.0",
+    "python-dotenv>=1.0.0",
+    "google-api-python-client>=2.170.0",
+    "google-auth>=2.40.0",
+    "google-auth-oauthlib>=1.2.0",
+]
+
+[project.scripts]
+google-workspace-server = "google_workspace_server:serve"
+
+[tool.hatch.build.targets.wheel]
+packages = ["src/google_workspace_server"]

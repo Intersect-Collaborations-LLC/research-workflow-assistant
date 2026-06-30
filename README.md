@@ -5,6 +5,8 @@ An open-source, modular AI research assistant that runs inside **[VS Code](https
 All RWA outputs — manuscripts, protocols, reports, analysis scripts, dashboards, and progress briefs — use **[Quarto](https://quarto.org/)** (by [Posit](https://posit.co/)) as the default document format. Quarto supports R and Python code execution, multi-format rendering (HTML, PDF, Word, PowerPoint, dashboards, websites, books, slides), native Mermaid diagrams, and built-in bibliography management. See [docs/posit-quarto-guide.md](docs/posit-quarto-guide.md) for the full ecosystem guide.
 
 > **Model note:** This project was developed and tested using **Claude Opus 4.6** and **GPT-5.3-Codex** in GitHub Copilot agent mode. You can switch between models depending on task type and preference. Other models available in Copilot ([model comparison](https://docs.github.com/en/copilot/reference/ai-models/model-comparison)) may also work, but behavior can vary by agent workflow, so validate critical outputs after switching.
+>
+> **Using OpenRouter with GitHub Copilot:** For access to a broader variety of models (including **DeepSeek** and **Z.ai GLM 5.2**) in addition to frontier models, you can connect GitHub Copilot to [OpenRouter](https://openrouter.ai/). OpenRouter-routed models often produce similar results at lower cost. See the [OpenRouter + GitHub Copilot integration guide](https://openrouter.ai/works-with-openrouter/github-copilot) and the [OpenRouter model catalog](https://openrouter.ai/models). As with any model switch, validate critical outputs after changing providers.
 
 > **First time here?** Start with [docs/quick-start.md](docs/quick-start.md),
 > or open Copilot Chat and type `@setup` for an interactive guided setup.
@@ -63,6 +65,7 @@ No PhD required. If you do research, this tool is for you.
 | **Troubleshooting and support** | `@troubleshooter` agent diagnoses environment and MCP issues, validates API keys, and provides practical how-to help for day-to-day RWA usage |
 | **Development and bug fixes** | `@developer` agent gathers requirements for bug fixes, feature requests, and codebase improvements, then directs to plan mode for implementation |
 | **Chat session export** | Export Copilot Chat conversations to QMD for reproducibility via `scripts/export_chat_session.py` or `chat-exporter` MCP server |
+| **Google Drive and Docs review sync** | `google-workspace` MCP server handles OAuth login, Drive import/export, and Docs comment-to-proposal round trips |
 | **ICMJE compliance** | Built into every agent: human-in-the-loop mandate, audit trail, AI disclosure generation, authorship checklist |
 
 ## Architecture
@@ -232,7 +235,7 @@ python -m venv .venv
 # macOS / Linux:
 # source .venv/bin/activate
 
-# Install all 11 MCP servers in development mode
+# Install all 12 MCP servers in development mode
 pip install -e mcp-servers/_shared \
             -e mcp-servers/pubmed-server \
             -e mcp-servers/openalex-server \
@@ -244,7 +247,8 @@ pip install -e mcp-servers/_shared \
             -e mcp-servers/prisma-tracker \
             -e mcp-servers/project-tracker \
             -e mcp-servers/chat-exporter \
-            -e mcp-servers/bibliography-manager
+            -e mcp-servers/bibliography-manager \
+            -e mcp-servers/google-workspace-server
 
 # Install dev tools (linting, testing)
 pip install -e ".[dev]"
@@ -267,7 +271,7 @@ Open `.env` and add your credentials. At minimum:
 | `ZOTERO_API_KEY` | [Zotero key settings](https://www.zotero.org/settings/keys) | If using Zotero |
 | `ZOTERO_USER_ID` | Numeric ID shown at the top of the [Zotero keys page](https://www.zotero.org/settings/keys) (not your username) | If using Zotero |
 
-Full details: [docs/api-setup-guide.md](docs/api-setup-guide.md)
+Full details: [docs/api-setup-guide.md](docs/api-setup-guide.md). For Google Drive and Google Docs integration setup and the review-workflow round-trip, see [docs/google-workspace-guide.md](docs/google-workspace-guide.md).
 
 `PROJECTS_ROOT` should normally remain `./my_projects` unless you explicitly want projects in another folder.
 
@@ -283,7 +287,7 @@ Need JSON for automation?
 python scripts/validate_setup.py --json
 ```
 
-Or in VS Code: **Ctrl+Shift+P** → "MCP: List Servers" — all 11 servers should appear.
+Or in VS Code: **Ctrl+Shift+P** → "MCP: List Servers" — all 12 servers should appear.
 
 ### Step 5 — Start using it
 

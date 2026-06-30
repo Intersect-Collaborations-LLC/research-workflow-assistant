@@ -119,6 +119,15 @@
                 "bibliography_manager"
             ],
             "cwd": "ASSISTANT_PATH/mcp-servers/bibliography-manager/src"
+        },
+        "google-workspace": {
+            "type": "stdio",
+            "command": "ASSISTANT_PATH/.venv/Scripts/python",
+            "args": [
+                "-m",
+                "google_workspace_server"
+            ],
+            "cwd": "ASSISTANT_PATH/mcp-servers/google-workspace-server/src"
         }
     }
 }

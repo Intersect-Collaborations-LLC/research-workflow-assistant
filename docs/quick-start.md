@@ -40,7 +40,8 @@ pip install -e mcp-servers/_shared \
             -e mcp-servers/prisma-tracker \
             -e mcp-servers/project-tracker \
             -e mcp-servers/chat-exporter \
-            -e mcp-servers/bibliography-manager
+            -e mcp-servers/bibliography-manager \
+            -e mcp-servers/google-workspace-server
 ```
 
 Or run VS Code task: `Install All MCP Servers`.
@@ -69,7 +70,7 @@ You can use `--json` with either script for machine-readable output.
 
 - Open Command Palette
 - Run `MCP: List Servers`
-- Confirm all 11 servers are available
+- Confirm all 12 servers are available
 
 ## 7. Start guided onboarding
 

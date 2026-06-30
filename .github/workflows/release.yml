@@ -51,7 +51,8 @@ jobs:
             -e mcp-servers/prisma-tracker \
             -e mcp-servers/project-tracker \
             -e mcp-servers/chat-exporter \
-            -e mcp-servers/bibliography-manager
+            -e mcp-servers/bibliography-manager \
+            -e mcp-servers/google-workspace-server
           pip freeze > "requirements-lock-${{ steps.version.outputs.VERSION }}.txt"
 
       - name: Extract changelog for this version

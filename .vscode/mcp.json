@@ -118,6 +118,15 @@
                 "bibliography_manager"
             ],
             "cwd": "${workspaceFolder}/mcp-servers/bibliography-manager/src"
+        },
+        "google-workspace": {
+            "type": "stdio",
+            "command": "${workspaceFolder}/.venv/Scripts/python",
+            "args": [
+                "-m",
+                "google_workspace_server"
+            ],
+            "cwd": "${workspaceFolder}/mcp-servers/google-workspace-server/src"
         }
     }
 }

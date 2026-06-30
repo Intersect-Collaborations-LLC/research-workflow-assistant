@@ -64,7 +64,7 @@ Each agent encodes a specialized research workflow:
 
 | Agent | Purpose | MCP Tools Used |
 |-------|---------|---------------|
-| `setup` | Guided first-time setup and environment validation | All 11 servers (for API key validation) |
+| `setup` | Guided first-time setup and environment validation | All 12 servers (for API key validation) |
 | `systematic-reviewer` | Full systematic review lifecycle | pubmed, openalex, semantic-scholar, europe-pmc, crossref, zotero, prisma-tracker |
 | `data-analyst` | Statistical analysis (R and Python) | None (uses language runtimes) |
 | `academic-writer` | Manuscript drafting with ICMJE compliance | zotero, crossref |
@@ -127,6 +127,11 @@ mcp-servers/<server-name>/
 - API: Zotero Web API v3 (JSON)
 - Auth: API key + User ID (ZOTERO_API_KEY, ZOTERO_USER_ID)
 - Tools: search, add items, collections, bibliography export, notes, tags
+
+**Google Workspace Server** (`google-workspace-server`)
+- API: Google Drive API and Google Docs-related Drive comments APIs
+- Auth: OAuth client ID and client secret (GOOGLE_OAUTH_CLIENT_ID, GOOGLE_OAUTH_CLIENT_SECRET)
+- Tools: OAuth connect/status/revoke, Drive file import/export, review-copy export with anchors, comment pull, and comment-to-proposal mapping for local files
 
 #### Tracking Servers
 

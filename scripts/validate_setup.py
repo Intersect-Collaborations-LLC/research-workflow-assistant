@@ -51,7 +51,7 @@ def _check_server_importable(module_name: str) -> dict:
 
 
 def _check_servers() -> dict:
-    """Check all 11 MCP server packages."""
+    """Check all configured MCP server packages."""
     servers = {
         "pubmed": "pubmed_server",
         "openalex": "openalex_server",
@@ -64,6 +64,7 @@ def _check_servers() -> dict:
         "project-tracker": "project_tracker",
         "chat-exporter": "chat_exporter",
         "bibliography-manager": "bibliography_manager",
+        "google-workspace": "google_workspace_server",
     }
     return {name: _check_server_importable(mod) for name, mod in servers.items()}
 
@@ -81,6 +82,10 @@ def _check_env_keys(workspace_root: Path) -> dict:
         "ZOTERO_API_KEY",
         "ZOTERO_USER_ID",
         "ZOTERO_DATA_DIR",
+        "GOOGLE_OAUTH_CLIENT_ID",
+        "GOOGLE_OAUTH_CLIENT_SECRET",
+        "GOOGLE_OAUTH_REDIRECT_URI",
+        "GOOGLE_WORKSPACE_TOKEN_PATH",
         "PROJECTS_ROOT",
     ]
     result: dict[str, str] = {}
@@ -276,6 +281,7 @@ def _check_server_health(module_name: str, workspace_root: Path) -> dict:
         "project_tracker": "project-tracker",
         "chat_exporter": "chat-exporter",
         "bibliography_manager": "bibliography-manager",
+        "google_workspace_server": "google-workspace-server",
     }
     dir_name = server_map.get(module_name, module_name)
     cwd = workspace_root / "mcp-servers" / dir_name / "src"
@@ -323,6 +329,7 @@ def _check_all_server_health(workspace_root: Path) -> dict:
         "project_tracker",
         "chat_exporter",
         "bibliography_manager",
+        "google_workspace_server",
     ]
     return {mod: _check_server_health(mod, workspace_root) for mod in modules}
 

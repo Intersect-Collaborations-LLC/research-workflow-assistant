@@ -50,7 +50,8 @@
                 "-e", "${workspaceFolder}/mcp-servers/prisma-tracker",
                 "-e", "${workspaceFolder}/mcp-servers/project-tracker",
                 "-e", "${workspaceFolder}/mcp-servers/chat-exporter",
-                "-e", "${workspaceFolder}/mcp-servers/bibliography-manager"
+                "-e", "${workspaceFolder}/mcp-servers/bibliography-manager",
+                "-e", "${workspaceFolder}/mcp-servers/google-workspace-server"
             ],
             "windows": {
                 "command": "${workspaceFolder}/.venv/Scripts/pip.exe"

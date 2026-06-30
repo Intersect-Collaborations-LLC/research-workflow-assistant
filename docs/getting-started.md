@@ -72,6 +72,7 @@ pip install -e mcp-servers/prisma-tracker
 pip install -e mcp-servers/project-tracker
 pip install -e mcp-servers/chat-exporter
 pip install -e mcp-servers/bibliography-manager
+pip install -e mcp-servers/google-workspace-server
 ```
 
 > **VS Code task shortcut:** You can also run `Ctrl+Shift+P` → "Tasks: Run Task" → "Install All MCP Servers" to install everything with a single click.
@@ -104,6 +105,11 @@ ZOTERO_API_KEY=your_key_here
 # Numeric User ID (NOT your username) — find it at: https://www.zotero.org/settings/keys
 ZOTERO_USER_ID=12345678
 
+# Optional for Google Drive and Google Docs integration
+GOOGLE_OAUTH_CLIENT_ID=your_google_client_id
+GOOGLE_OAUTH_CLIENT_SECRET=your_google_client_secret
+GOOGLE_OAUTH_REDIRECT_URI=http://localhost:8765/
+
 # Optional: custom directories for tracking data
 # PRISMA_PROJECT_DIR=./review-tracking
 # PROJECT_TRACKER_DIR=./project-tracking
@@ -121,7 +127,7 @@ Open the workspace in VS Code and check that MCP servers start properly:
 
 1. Open the Command Palette (`Ctrl+Shift+P` / `Cmd+Shift+P`)
 2. Select "MCP: List Servers"
-3. All 11 servers should appear and show as available
+3. All 12 servers should appear and show as available
 
 You can also test individual servers from the terminal:
 
@@ -284,7 +290,7 @@ If you work in a separate VS Code workspace, you have two options:
 
 1. **Multi-root workspace** — add both the assistant repo and your project as workspace folders. Use the template at `templates/research-workspace.code-workspace.example`.
 
-2. **Portable MCP config** — copy `templates/portable-mcp-config.json` to your project's `.vscode/mcp.json` and update the paths. This gives your project access to all 11 MCP servers without needing the assistant repo open.
+2. **Portable MCP config** — copy `templates/portable-mcp-config.json` to your project's `.vscode/mcp.json` and update the paths. This gives your project access to all 12 MCP servers without needing the assistant repo open.
 
 ## Chat Session Export
 
