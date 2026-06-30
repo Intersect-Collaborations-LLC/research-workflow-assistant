@@ -6,7 +6,20 @@ All RWA outputs — manuscripts, protocols, reports, analysis scripts, dashboard
 
 > **Model note:** This project was developed and tested using **Claude Opus 4.6** and **GPT-5.3-Codex** in GitHub Copilot agent mode. You can switch between models depending on task type and preference. Other models available in Copilot ([model comparison](https://docs.github.com/en/copilot/reference/ai-models/model-comparison)) may also work, but behavior can vary by agent workflow, so validate critical outputs after switching.
 >
-> **Using OpenRouter with GitHub Copilot:** For access to a broader variety of models (including **DeepSeek** and **Z.ai GLM 5.2**) in addition to frontier models, you can connect GitHub Copilot to [OpenRouter](https://openrouter.ai/). OpenRouter-routed models often produce similar results at lower cost. See the [OpenRouter + GitHub Copilot integration guide](https://openrouter.ai/works-with-openrouter/github-copilot) and the [OpenRouter model catalog](https://openrouter.ai/models). As with any model switch, validate critical outputs after changing providers.
+> **Using OpenRouter with GitHub Copilot:** [OpenRouter](https://openrouter.ai/) is a routing service (it does not host its own models) that connects GitHub Copilot to models from many providers through a single API. In addition to frontier models from Anthropic and OpenAI, it gives access to capable but more affordable open-source and open-weight models. See the [OpenRouter + GitHub Copilot integration guide](https://openrouter.ai/works-with-openrouter/github-copilot) and the [model catalog sorted by agentic ability](https://openrouter.ai/models?order=agentic-high-to-low).
+>
+> Examples of open-source/open-weight models available via OpenRouter alongside the frontier models above (pricing per million tokens, as of June 2026):
+>
+> | Model | Provider | Context | Input $/M | Output $/M |
+> |---|---|---|---|---|
+> | GLM 5.2 | Z.ai | 1.05M | $0.94 | $3.00 |
+> | DeepSeek V4 Pro | DeepSeek | 1.05M | $0.44 | $0.87 |
+> | DeepSeek V4 Flash | DeepSeek | 1.05M | $0.09 | $0.18 |
+> | MiniMax M3 | MiniMax | 1.05M | $0.30 | $1.20 |
+> | Qwen3.7 Max | Alibaba | 1M | $1.25 | $3.75 |
+> | Kimi K2.6 | Moonshot AI | 262K | $0.55 | $3.20 |
+>
+> For comparison, frontier models on the same catalog include Anthropic Claude Opus 4.8 ($5/$25), OpenAI GPT-5.5 ($5/$30), and Anthropic Claude Sonnet 4.6 ($3/$15). The open-source options above can produce similar results for RWA workflows at a fraction of the cost. As with any model switch, validate critical outputs after changing providers.
 
 > **First time here?** Start with [docs/quick-start.md](docs/quick-start.md),
 > or open Copilot Chat and type `@setup` for an interactive guided setup.
