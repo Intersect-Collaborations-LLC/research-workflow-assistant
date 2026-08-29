@@ -19,8 +19,9 @@ Options:
     --summary           Export compact summary mode (tool labels only).
     --verbose           Deprecated alias for full-detail mode (now default).
     --no-thinking       Exclude model thinking/reasoning blocks.
+    --raw               Also copy the raw session .jsonl next to the .qmd.
     --workspace PATH    Override workspace root for session discovery.
-    --json              Output session list as JSON (with --list).
+    --json              JSON output (with --list)
 """
 
 from __future__ import annotations
@@ -30,6 +31,7 @@ import json
 import os
 import platform
 import re
+import shutil
 import sys
 from datetime import UTC, datetime
 from pathlib import Path
@@ -215,6 +217,11 @@ def main() -> int:
         help="Deprecated alias for full-detail mode (default)",
     )
     parser.add_argument("--no-thinking", action="store_true", help="Exclude thinking blocks")
+    parser.add_argument(
+        "--raw",
+        action="store_true",
+        help="Also copy the raw session .jsonl next to the exported .qmd",
+    )
     parser.add_argument("--workspace", help="Override workspace root path")
     parser.add_argument("--json", action="store_true", help="JSON output (with --list)")
 
@@ -284,6 +291,10 @@ def main() -> int:
         include_thinking=include_thinking,
         detail_level=detail_level,
     )
+    if args.raw:
+        raw_dest = output_path.with_suffix(".jsonl")
+        shutil.copyfile(session_path, raw_dest)
+        print(f"Raw session copied to: {raw_dest}")
     print(f"Exported to: {result}")
     return 0
 

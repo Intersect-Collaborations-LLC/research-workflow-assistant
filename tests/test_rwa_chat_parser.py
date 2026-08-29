@@ -189,3 +189,81 @@ def test_render_qmd_summary_mode_hides_tool_io(tmp_path: Path) -> None:
     assert "Details: run_in_terminal" not in qmd
     assert "**Input:**" not in qmd
     assert "**Output:**" not in qmd
+
+
+def _write_metadata_first_request_session(path: Path) -> None:
+    """Session where the first request is embedded in kind-0 metadata and
+    a retry confirmation ("Try Again") follows a failed attempt."""
+    entries = [
+        {
+            "kind": 0,
+            "v": {
+                "version": 3,
+                "sessionId": "session-meta",
+                "modelId": "copilot/test-model",
+                "creationDate": 1712400000000,
+                "requests": [
+                    {
+                        "requestId": "req-0",
+                        "timestamp": 1712400000000,
+                        "modelId": "copilot/test-model",
+                        "agent": {"name": "agent"},
+                        "message": {"text": "What is the capital of France?"},
+                        "response": [],
+                    }
+                ],
+            },
+        },
+        # Failed attempt: response patch for request 0 (error path, no content)
+        {"kind": 2, "k": ["requests", 0, "response"], "v": []},
+        # Retry confirmation duplicating request 0
+        {
+            "kind": 2,
+            "k": ["requests"],
+            "v": [
+                {
+                    "requestId": "req-0-retry",
+                    "timestamp": 1712400005000,
+                    "confirmation": "Try Again",
+                    "message": {"text": "@agent Try Again"},
+                    "response": [],
+                }
+            ],
+        },
+        # Successful response arrives as a patch targeted at the retry index (1)
+        {
+            "kind": 2,
+            "k": ["requests", 1, "response"],
+            "v": [{"kind": "markdownContent", "value": "The capital is Paris."}],
+        },
+    ]
+
+    with open(path, "w", encoding="utf-8") as fh:
+        for entry in entries:
+            fh.write(json.dumps(entry) + "\n")
+
+
+def test_parse_session_reads_first_request_from_metadata(tmp_path: Path) -> None:
+    session_path = tmp_path / "session.jsonl"
+    _write_metadata_first_request_session(session_path)
+
+    session = parse_session(session_path)
+
+    # The retry must not create a duplicate turn
+    assert len(session.messages) == 1
+    # The original prompt from kind-0 metadata is preserved
+    assert session.messages[0].user_text == "What is the capital of France?"
+    # The response patched at the retry index is merged into the original turn
+    assert session.messages[0].response_text == "The capital is Paris."
+
+
+def test_render_qmd_includes_metadata_first_prompt(tmp_path: Path) -> None:
+    session_path = tmp_path / "session.jsonl"
+    _write_metadata_first_request_session(session_path)
+
+    session = parse_session(session_path)
+    qmd = render_qmd(session)
+
+    assert "What is the capital of France?" in qmd
+    assert "The capital is Paris." in qmd
+    assert "Try Again" not in qmd

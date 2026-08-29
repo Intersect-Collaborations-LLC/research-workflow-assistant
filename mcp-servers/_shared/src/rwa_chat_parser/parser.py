@@ -4,7 +4,8 @@ Reads the undocumented JSONL format stored in:
   %APPDATA%/Code/User/workspaceStorage/<hash>/chatSessions/<session-id>.jsonl
 
 JSONL entry kinds:
-  kind 0 — Session metadata (version, model, sessionId, creationDate)
+  kind 0 — Session metadata (version, model, sessionId, creationDate).
+           May embed the session's first request(s) in v.requests.
   kind 1 — State patches (title, input text, model state, follow-ups, etc.)
   kind 2 — Request/response data (the actual conversation turns)
 """
@@ -38,6 +39,9 @@ def parse_session(path: Path) -> ChatSession:
     # Accumulate request entries and response patches separately
     request_map: dict[int, dict[str, Any]] = {}  # index -> raw request dict
     response_patches: dict[int, list[Any]] = {}  # index -> accumulated response items
+    # Retry confirmations ("Try Again") map retry index -> original request index
+    retry_targets: dict[int, int] = {}
+    last_primary_index: int | None = None
 
     with open(path, encoding="utf-8") as fh:
         for line_no, raw_line in enumerate(fh, start=1):
@@ -56,10 +60,28 @@ def parse_session(path: Path) -> ChatSession:
 
             if kind == 0:
                 _parse_session_metadata(entry, session)
+                # The first request(s) of a session are embedded in the
+                # kind-0 metadata under v.requests. Later requests arrive as
+                # kind-2 appends, so seed the request map from metadata first
+                # to keep indices aligned with VS Code's own numbering.
+                meta_requests = entry.get("v", {}).get("requests", [])
+                if isinstance(meta_requests, list):
+                    for raw_req in meta_requests:
+                        if isinstance(raw_req, dict):
+                            req_index = len(request_map)
+                            request_map[req_index] = raw_req
+                            last_primary_index = req_index
+                            inline_response = raw_req.get("response", [])
+                            if inline_response:
+                                response_patches.setdefault(req_index, []).extend(
+                                    inline_response
+                                )
             elif kind == 1:
                 _apply_state_patch(keys, value, session)
             elif kind == 2:
-                _apply_data_entry(keys, value, request_map, response_patches)
+                _apply_data_entry(
+                    keys, value, request_map, response_patches, retry_targets, last_primary_index
+                )
             else:
                 logger.debug("Unknown entry kind %s on line %d", kind, line_no)
 
@@ -96,6 +118,8 @@ def _apply_data_entry(
     value: Any,
     request_map: dict[int, dict[str, Any]],
     response_patches: dict[int, list[Any]],
+    retry_targets: dict[int, int],
+    last_primary_index: int | None = None,
 ) -> None:
     """Process kind-2 data entries (requests and responses).
 
@@ -106,8 +130,24 @@ def _apply_data_entry(
     if keys == ["requests"] and isinstance(value, list):
         # New request entry — may contain multiple requests (usually 1)
         for raw_req in value:
+            if not isinstance(raw_req, dict):
+                continue
             req_index = len(request_map)
+            if raw_req.get("confirmation"):
+                # Retry confirmation ("Try Again"): duplicates a prior
+                # request. Record the mapping so response patches targeted at
+                # this retry index are merged into the original turn instead
+                # of creating a duplicate turn with placeholder text.
+                target = last_primary_index if last_primary_index is not None else req_index
+                retry_targets[req_index] = target
+                # A retry may carry its own response payload (the successful
+                # attempt after earlier failures) — merge it into the target.
+                inline_response = raw_req.get("response", [])
+                if inline_response:
+                    response_patches.setdefault(target, []).extend(inline_response)
+                continue
             request_map[req_index] = raw_req
+            last_primary_index = req_index
             # The initial request often contains response data inline
             inline_response = raw_req.get("response", [])
             if inline_response:
@@ -123,6 +163,8 @@ def _apply_data_entry(
             idx = int(keys[1])
         except (ValueError, TypeError):
             return
+        # Redirect patches aimed at retry confirmations to the original turn
+        idx = retry_targets.get(idx, idx)
         response_patches.setdefault(idx, []).extend(value)
 
     elif keys == ["pendingRequests"]:
