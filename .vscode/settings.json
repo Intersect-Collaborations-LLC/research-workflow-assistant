@@ -17,5 +17,6 @@
         "**/.mypy_cache": true
     },
     "chat.agent.enabled": true,
-    "search.useIgnoreFiles": false
+    "search.useIgnoreFiles": false,
+    "quarto.path": "/opt/quarto/bin/quarto"
 }
